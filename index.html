@@ -474,116 +474,6 @@
     </div>
 
     <script>
-<<<<<<< HEAD
-        // Weather data generator
-        function generateWeatherData(location) {
-            const baseTemp = Math.floor(Math.random() * 15) + 15;
-            const conditions = ["Sunny", "Cloudy", "Rainy", "Thunderstorm", "Partly Cloudy"];
-            const condition = conditions[Math.floor(Math.random() * conditions.length)];
-            
-            const weatherData = {
-                location: location,
-                temperature: baseTemp,
-                description: condition,
-                humidity: `${Math.floor(Math.random() * 40) + 40}%`,
-                wind: `${Math.floor(Math.random() * 20) + 5} km/h`,
-                pressure: `${Math.floor(Math.random() * 40) + 990} hPa`,
-                visibility: `${Math.floor(Math.random() * 10) + 5} km`,
-                forecast: []
-            };
-            
-            // Generate 5-day forecast
-            for (let i = 1; i <= 5; i++) {
-                const dayTemp = baseTemp + Math.floor(Math.random() * 7) - 3;
-                const nightTemp = dayTemp - Math.floor(Math.random() * 6) + 5;
-                const dayCondition = conditions[Math.floor(Math.random() * conditions.length)];
-                
-                // Determine icon based on condition
-                const iconMap = {
-                    "Sunny": "sun",
-                    "Cloudy": "cloud",
-                    "Rainy": "cloud-rain",
-                    "Thunderstorm": "bolt",
-                    "Partly Cloudy": "cloud-sun"
-                };
-                
-                weatherData.forecast.push({
-                    day: new Date(Date.now() + (i * 24 * 60 * 60 * 1000)).toLocaleDateString('en-US', { weekday: 'short' }),
-                    icon: iconMap[dayCondition],
-                    high: dayTemp,
-                    low: nightTemp,
-                    desc: dayCondition
-                });
-            }
-            
-            return weatherData;
-        }
-
-        // Update UI with weather data
-        function updateWeatherUI(data) {
-            document.getElementById('location').textContent = data.location;
-            document.getElementById('temperature').textContent = data.temperature;
-            document.getElementById('description').textContent = data.description;
-            document.getElementById('humidity').textContent = data.humidity;
-            document.getElementById('wind').textContent = data.wind;
-            document.getElementById('pressure').textContent = data.pressure;
-            document.getElementById('visibility').textContent = data.visibility;
-            
-            // Update weather icon
-            const iconMap = {
-                "Sunny": "sun",
-                "Cloudy": "cloud",
-                "Rainy": "cloud-rain",
-                "Thunderstorm": "bolt",
-                "Partly Cloudy": "cloud-sun"
-            };
-            const weatherIcon = document.getElementById('weather-icon');
-            weatherIcon.innerHTML = `<i class="fas fa-${iconMap[data.description] || 'sun'}"></i>`;
-            
-            // Update forecast
-            const forecastContainer = document.getElementById('forecast-cards');
-            forecastContainer.innerHTML = '';
-            
-            data.forecast.forEach(day => {
-                const forecastCard = document.createElement('div');
-                forecastCard.className = 'forecast-card';
-                forecastCard.innerHTML = `
-                    <div class="forecast-day">${day.day}</div>
-                    <div class="forecast-icon"><i class="fas fa-${day.icon}"></i></div>
-                    <div class="forecast-desc">${day.desc}</div>
-                    <div class="forecast-temp">
-                        <span class="forecast-high">${day.high}°</span>
-                        <span class="forecast-low">${day.low}°</span>
-                    </div>
-                `;
-                forecastContainer.appendChild(forecastCard);
-            });
-            
-            // Add animation for feedback
-            const weatherCard = document.querySelector('.weather-card');
-            weatherCard.style.transform = "rotateY(15deg) rotateX(5deg)";
-            setTimeout(() => {
-                weatherCard.style.transform = "rotateY(0) rotateX(0)";
-            }, 500);
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set current date
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
-
-            // Initial load with sample data
-            updateWeatherUI(generateWeatherData("New York, US"));
-
-            // Search functionality
-            document.getElementById('search-btn').addEventListener('click', function() {
-                const location = document.getElementById('location-input').value.trim();
-                if (location) {
-                    // Show loading state
-                    const weatherIcon = document.getElementById('weather-icon');
-                    weatherIcon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-=======
         document.addEventListener('DOMContentLoaded', () => {
             // Game elements
             const canvas = document.getElementById('gameCanvas');
@@ -723,7 +613,6 @@
                     
                     // Generate new food
                     generateFood();
->>>>>>> baf064562f13cbc73240938be2ac0e1da564a773
                     
                     // Occasionally generate new obstacles
                     if (score % 50 === 0) {
@@ -1085,18 +974,6 @@
                     // Show player name modal
                     finalScoreDisplay.textContent = score;
                     setTimeout(() => {
-<<<<<<< HEAD
-                        updateWeatherUI(generateWeatherData(location));
-                    }, 800);
-                }
-            });
-
-            document.getElementById('location-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    document.getElementById('search-btn').click();
-                }
-            });
-=======
                         playerNameModal.classList.add('active');
                     }, 1500);
                 }
@@ -1238,7 +1115,6 @@
             
             // Initialize high score display
             highScoreDisplay.textContent = `High Score: ${highScore}`;
->>>>>>> baf064562f13cbc73240938be2ac0e1da564a773
         });
     </script>
 </body>
