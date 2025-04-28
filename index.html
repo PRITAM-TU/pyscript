@@ -487,33 +487,76 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set current date
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
-
-            // Sample data - in a real app, this would come from an API
-            const sampleWeatherData = {
-                location: "New York, US",
-                temperature: 24,
-                description: "Sunny",
-                humidity: "65%",
-                wind: "12 km/h",
-                pressure: "1012 hPa",
-                visibility: "10 km",
-                forecast: [
-                    { day: "Tue", icon: "cloud-sun", high: 26, low: 18, desc: "Partly Cloudy" },
-                    { day: "Wed", icon: "cloud-showers-heavy", high: 22, low: 16, desc: "Showers" },
-                    { day: "Thu", icon: "cloud-sun", high: 25, low: 17, desc: "Partly Cloudy" },
-                    { day: "Fri", icon: "sun", high: 28, low: 20, desc: "Sunny" },
-                    { day: "Sat", icon: "bolt", high: 23, low: 16, desc: "Thunderstorms" }
-                ]
+        // Weather data generator
+        function generateWeatherData(location) {
+            const baseTemp = Math.floor(Math.random() * 15) + 15;
+            const conditions = ["Sunny", "Cloudy", "Rainy", "Thunderstorm", "Partly Cloudy"];
+            const condition = conditions[Math.floor(Math.random() * conditions.length)];
+            
+            const weatherData = {
+                location: location,
+                temperature: baseTemp,
+                description: condition,
+                humidity: `${Math.floor(Math.random() * 40) + 40}%`,
+                wind: `${Math.floor(Math.random() * 20) + 5} km/h`,
+                pressure: `${Math.floor(Math.random() * 40) + 990} hPa`,
+                visibility: `${Math.floor(Math.random() * 10) + 5} km`,
+                forecast: []
             };
+            
+            // Generate 5-day forecast
+            for (let i = 1; i <= 5; i++) {
+                const dayTemp = baseTemp + Math.floor(Math.random() * 7) - 3;
+                const nightTemp = dayTemp - Math.floor(Math.random() * 6) + 5;
+                const dayCondition = conditions[Math.floor(Math.random() * conditions.length)];
+                
+                // Determine icon based on condition
+                const iconMap = {
+                    "Sunny": "sun",
+                    "Cloudy": "cloud",
+                    "Rainy": "cloud-rain",
+                    "Thunderstorm": "bolt",
+                    "Partly Cloudy": "cloud-sun"
+                };
+                
+                weatherData.forecast.push({
+                    day: new Date(Date.now() + (i * 24 * 60 * 60 * 1000)).toLocaleDateString('en-US', { weekday: 'short' }),
+                    icon: iconMap[dayCondition],
+                    high: dayTemp,
+                    low: nightTemp,
+                    desc: dayCondition
+                });
+            }
+            
+            return weatherData;
+        }
 
-            // Populate forecast cards
+        // Update UI with weather data
+        function updateWeatherUI(data) {
+            document.getElementById('location').textContent = data.location;
+            document.getElementById('temperature').textContent = data.temperature;
+            document.getElementById('description').textContent = data.description;
+            document.getElementById('humidity').textContent = data.humidity;
+            document.getElementById('wind').textContent = data.wind;
+            document.getElementById('pressure').textContent = data.pressure;
+            document.getElementById('visibility').textContent = data.visibility;
+            
+            // Update weather icon
+            const iconMap = {
+                "Sunny": "sun",
+                "Cloudy": "cloud",
+                "Rainy": "cloud-rain",
+                "Thunderstorm": "bolt",
+                "Partly Cloudy": "cloud-sun"
+            };
+            const weatherIcon = document.getElementById('weather-icon');
+            weatherIcon.innerHTML = `<i class="fas fa-${iconMap[data.description] || 'sun'}"></i>`;
+            
+            // Update forecast
             const forecastContainer = document.getElementById('forecast-cards');
-            sampleWeatherData.forecast.forEach(day => {
+            forecastContainer.innerHTML = '';
+            
+            data.forecast.forEach(day => {
                 const forecastCard = document.createElement('div');
                 forecastCard.className = 'forecast-card';
                 forecastCard.innerHTML = `
@@ -527,60 +570,44 @@
                 `;
                 forecastContainer.appendChild(forecastCard);
             });
+            
+            // Add animation for feedback
+            const weatherCard = document.querySelector('.weather-card');
+            weatherCard.style.transform = "rotateY(15deg) rotateX(5deg)";
+            setTimeout(() => {
+                weatherCard.style.transform = "rotateY(0) rotateX(0)";
+            }, 500);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+
+            // Initial load with sample data
+            updateWeatherUI(generateWeatherData("New York, US"));
 
             // Search functionality
-            document.getElementById('search-btn').addEventListener('click', searchWeather);
-            document.getElementById('location-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchWeather();
-                }
-            });
-
-            function searchWeather() {
+            document.getElementById('search-btn').addEventListener('click', function() {
                 const location = document.getElementById('location-input').value.trim();
                 if (location) {
-                    // In a real app, this would call your backend API
-                    document.getElementById('location').textContent = location;
-                    
                     // Show loading state
                     const weatherIcon = document.getElementById('weather-icon');
                     weatherIcon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                     
                     // Simulate API call delay
                     setTimeout(() => {
-                        // Update with new data - in a real app, this would be the API response
-                        document.getElementById('temperature').textContent = Math.floor(Math.random() * 15) + 15;
-                        document.getElementById('description').textContent = ["Sunny", "Cloudy", "Rainy", "Thunderstorm"][Math.floor(Math.random() * 4)];
-                        document.getElementById('humidity').textContent = Math.floor(Math.random() * 40) + 40 + "%";
-                        document.getElementById('wind').textContent = Math.floor(Math.random() * 20) + 5 + " km/h";
-                        
-                        // Update icon based on weather
-                        const desc = document.getElementById('description').textContent.toLowerCase();
-                        let icon = "sun";
-                        if (desc.includes("cloud")) icon = "cloud";
-                        if (desc.includes("rain")) icon = "cloud-rain";
-                        if (desc.includes("thunder")) icon = "bolt";
-                        
-                        weatherIcon.innerHTML = `<i class="fas fa-${icon}"></i>`;
-                        
-                        // Add animation for feedback
-                        weatherIcon.style.animation = "none";
-                        void weatherIcon.offsetWidth; // Trigger reflow
-                        weatherIcon.style.animation = "float 3s ease-in-out infinite";
-                        
-                        // 3D card effect
-                        const weatherCard = document.querySelector('.weather-card');
-                        weatherCard.style.transform = "rotateY(15deg) rotateX(5deg)";
-                        setTimeout(() => {
-                            weatherCard.style.transform = "rotateY(0) rotateX(0)";
-                        }, 500);
-                        
-                    }, 1000);
+                        updateWeatherUI(generateWeatherData(location));
+                    }, 800);
                 }
-            }
+            });
 
-            // Initial load with sample data
-            searchWeather();
+            document.getElementById('location-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('search-btn').click();
+                }
+            });
         });
     </script>
 </body>
